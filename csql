@@ -1,3 +1,3 @@
 #!/usr/bin/env python
-import cartopy.cli
-cartopy.cli.main()
+import cartosql.cli
+cartosql.cli.main()

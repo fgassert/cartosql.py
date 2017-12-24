@@ -3,10 +3,10 @@ Utility library for interacting with CARTO via the SQL API
 
 Example:
 ```
-import carto
+import cartosql
 
 # CARTO_USER and CARTO_KEY read from environment if not specified
-r = carto.get('select * from mytable', user=CARTO_USER, key=CARTO_KEY)
+r = cartosql.get('select * from mytable', user=CARTO_USER, key=CARTO_KEY)
 
 data = r.json()
 ```

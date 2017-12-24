@@ -21,7 +21,7 @@ Other:
  -o <order>  Adds ORDER BY clause
 
 '''
-import cartopy
+import cartosql
 import logging
 from docopt import docopt
 import json
@@ -50,29 +50,29 @@ def processArgs(args):
     if args['--help']:
         return __doc__
     elif args['post'] and args['<sql>']:
-        r = cartopy.post(args['<sql>'], **opts)
+        r = cartosql.post(args['<sql>'], **opts)
         return returnFormat(r, f)
     elif args['get']:
         if args['<sql>']:
-            r = cartopy.get(args['<sql>'], **opts)
+            r = cartosql.get(args['<sql>'], **opts)
             return returnFormat(r, f)
         if args['<fields>'] and args['<table>']:
             if args['-w']:
                 opts['where'] = args['-w']
             if args['-o']:
                 opts['order'] = args['-o']
-            r = cartopy.getFields(args['<fields>'], args['<table>'], **opts)
+            r = cartosql.getFields(args['<fields>'], args['<table>'], **opts)
             return returnFormat(r, f)
     elif args['ls']:
-        r = cartopy.getTables(**opts)
+        r = cartosql.getTables(**opts)
         if f is None or f == 'csv':
             return prettyJson(r)
         return returnFormat(r, f)
     elif args['exists'] and args['<table>']:
-        r = cartopy.tableExists(args['<table>'], **opts)
+        r = cartosql.tableExists(args['<table>'], **opts)
         return returnFormat(r, f)
     elif args['drop'] and args['<table>']:
-        r = cartopy.dropTable(args['<table>'], **opts)
+        r = cartosql.dropTable(args['<table>'], **opts)
         return returnFormat(r, f)
     return __doc__
 
