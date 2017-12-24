@@ -16,8 +16,15 @@ data = r.json()
 Read more at:
 http://carto.com/docs/carto-engine/sql-api/making-calls/
 
-## Install
+
+__Install__
 
 `pip install -e git+https://github.com/fgassert/cartopy.git#egg=cartopy`
-`pip install -r cartopy/requirements.txt`
 
+__Develop__
+
+```
+git clone https://github.com/fgassert/cartopy.git
+cd cartopy
+pip install -e .
+```
