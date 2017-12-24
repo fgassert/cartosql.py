@@ -26,7 +26,6 @@ CARTO_USER = os.environ.get('CARTO_USER')
 CARTO_KEY = os.environ.get('CARTO_KEY')
 STRICT = True
 
-
 def sendSql(sql, user=CARTO_USER, key=CARTO_KEY, f='', post=True):
     '''Send arbitrary sql and return response object or False'''
     url = CARTO_URL.format(user)
@@ -118,7 +117,7 @@ def createIndex(table, fields, unique='', using='', user=CARTO_USER, key=CARTO_K
 
 def _escapeValue(value, dtype):
     '''
-    Escape value for SQL based on column type
+    Escape value for SQL based on field type
 
     TYPE         Escaped
     None      -> NULL
@@ -132,15 +131,15 @@ def _escapeValue(value, dtype):
         return "NULL"
     if dtype == 'geometry':
         # if not string assume GeoJSON and assert WKID
-        if type(value) is not str:
+        if isinstance(value, str):
+            return value
+        else:
             value = json.dumps(value)
             return "ST_SetSRID(ST_GeomFromGeoJSON('{}'),4326)".format(value)
-        else:
-            return value
     elif dtype in ('text', 'timestamp', 'varchar'):
         # quote strings, escape quotes, and drop nbsp
         return "'{}'".format(
-            str(value).replace('\xa0', ' ').replace("'", "''"))
+            str(value).replace("'", "''"))
     else:
         return str(value)
 

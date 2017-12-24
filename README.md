@@ -1,6 +1,6 @@
 # CartoSQL.py
 
-Simple utility library for interacting with the CARTO SQL API.
+Simple utility library for interacting with the [CARTO SQL API](http://carto.com/docs/carto-engine/sql-api/making-calls/).
 
 Example:
 
@@ -13,10 +13,6 @@ r = cartosql.get('select * from mytable', user=CARTO_USER, key=CARTO_KEY)
 data = r.json()
 ```
 
-Read more at:
-http://carto.com/docs/carto-engine/sql-api/making-calls/
-
-
 __Install__
 
 `pip install -e git+https://github.com/fgassert/cartosql.py.git#egg=cartosql`
@@ -28,3 +24,4 @@ git clone https://github.com/fgassert/cartosql.py.git
 cd cartosql
 pip install -e .
 ```
+
