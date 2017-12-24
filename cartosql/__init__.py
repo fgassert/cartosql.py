@@ -58,7 +58,8 @@ def post(sql, user=CARTO_USER, key=CARTO_KEY, f=''):
     return sendSql(sql, user, key, f)
 
 
-def getFields(fields='*', table='', where='', order='', user=CARTO_USER, key=CARTO_KEY, f='', post=False):
+def getFields(fields, table, where='', order='', user=CARTO_USER,
+              key=CARTO_KEY, f='', post=False):
     '''Select fields from table'''
     fields = (fields,) if isinstance(fields, str) else fields
     where = ' WHERE {}'.format(where) if where else ''
@@ -81,11 +82,11 @@ def tableExists(table, user=CARTO_USER, key=CARTO_KEY):
     return table in getTables()
 
 
-def createTable(table, schema={}, user=CARTO_USER, key=CARTO_KEY):
+def createTable(table, schema, user=CARTO_USER, key=CARTO_KEY):
     '''
     Create table with schema and CartoDBfy table
 
-    Schema should be a dict or list of tuple pairs with
+    `schema` should be a dict or list of tuple pairs with
      - keys as field names and
      - values as field types
     '''
@@ -103,7 +104,8 @@ def _cdbfyTable(table, user=CARTO_USER, key=CARTO_KEY):
     return post(sql, user, key)
 
 
-def createIndex(table, fields, unique='', using='', user=CARTO_USER, key=CARTO_KEY):
+def createIndex(table, fields, unique='', using='', user=CARTO_USER,
+                key=CARTO_KEY):
     '''Create index on table on field(s)'''
     fields = (fields,) if isinstance(fields, str) else fields
     f_underscore = '_'.join(fields)
@@ -163,7 +165,8 @@ def _insertRows(table, fields, dtypes, rows, user=CARTO_USER, key=CARTO_KEY):
     return post(sql, user, key)
 
 
-def insertRows(table, fields, dtypes, rows, user=CARTO_USER, key=CARTO_KEY, blocksize=1000):
+def insertRows(table, fields, dtypes, rows, user=CARTO_USER,
+               key=CARTO_KEY, blocksize=1000):
     '''
     Insert rows into table
 
@@ -175,8 +178,7 @@ def insertRows(table, fields, dtypes, rows, user=CARTO_USER, key=CARTO_KEY, bloc
     '''
     # iterate in blocks
     while len(rows):
-        if not _insertRows(table, fields, dtypes,
-                          rows[:blocksize], user, key):
+        if not _insertRows(table, fields, dtypes, rows[:blocksize], user, key):
             return False
         rows = rows[blocksize:]
     return True
@@ -191,7 +193,8 @@ def deleteRows(table, where, user=CARTO_USER, key=CARTO_KEY):
     return post(sql)
 
 
-def deleteRowsByIDs(table, ids, id_field='cartodb_id', user=CARTO_USER, key=CARTO_KEY):
+def deleteRowsByIDs(table, ids, id_field='cartodb_id', user=CARTO_USER,
+                    key=CARTO_KEY):
     '''Delete rows from table by IDs'''
     where = '{} in ({})'.format(id_field, ','.join(ids))
     return deleteRows(table, where, user, key)
