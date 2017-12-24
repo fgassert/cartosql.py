@@ -14,12 +14,14 @@ data = r.json()
 Read more at:
 http://carto.com/docs/carto-engine/sql-api/making-calls/
 '''
+from __future__ import unicode_literals
+from builtins import str
 import requests
 import os
 import logging
 import json
 
-CARTO_URL = "https://{}.carto.com/api/v2/sql"
+CARTO_URL = 'https://{}.carto.com/api/v2/sql'
 CARTO_USER = os.environ.get('CARTO_USER')
 CARTO_KEY = os.environ.get('CARTO_KEY')
 STRICT = True
@@ -59,7 +61,7 @@ def post(sql, user=CARTO_USER, key=CARTO_KEY, f=''):
 
 def getFields(fields='*', table='', where='', order='', user=CARTO_USER, key=CARTO_KEY, f='', post=False):
     '''Select fields from table'''
-    fields = (fields,) if type(fields) is str else fields
+    fields = (fields,) if isinstance(fields, str) else fields
     where = ' WHERE {}'.format(where) if where else ''
     order = ' ORDER BY {}'.format(order) if order else ''
     sql = 'SELECT {} FROM "{}" {} {}'.format(
@@ -104,7 +106,7 @@ def _cdbfyTable(table, user=CARTO_USER, key=CARTO_KEY):
 
 def createIndex(table, fields, unique='', using='', user=CARTO_USER, key=CARTO_KEY):
     '''Create index on table on field(s)'''
-    fields = (fields,) if type(fields) is str else fields
+    fields = (fields,) if isinstance(fields, str) else fields
     f_underscore = '_'.join(fields)
     f_comma = ','.join(fields)
     unique = 'UNIQUE' if unique else ''
@@ -201,6 +203,6 @@ def dropTable(table, user=CARTO_USER, key=CARTO_KEY):
     sql = 'DROP TABLE "{}"'.format(table)
     return post(sql)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     from . import cli
     cli.main()

@@ -2,12 +2,12 @@
 Utility library for interacting with CARTO via the SQL API
 
 Usage:
- cartopy.py post <sql> [options]
- cartopy.py get <sql> [options]
- cartopy.py get <fields> <table> [-w <where>] [-o <order>] [options]
- cartopy.py ls [options]
- cartopy.py exists <table> [options]
- cartopy.py drop <table> [options]
+ csql post <sql> [options]
+ csql get <sql> [options]
+ csql get <fields> <table> [-w <where>] [-o <order>] [options]
+ csql ls [options]
+ csql exists <table> [options]
+ csql drop <table> [options]
 
 Options:
  -h --help   Print this text
