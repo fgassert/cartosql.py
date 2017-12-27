@@ -25,3 +25,25 @@ cd cartosql
 pip install -e .
 ```
 
+### CLI
+
+```
+Usage:
+ csql post <sql> [options]
+ csql get <sql> [options]
+ csql get <fields> <table> [-w <where>] [-o <order>] [options]
+ csql ls [options]
+ csql exists <table> [options]
+ csql drop <table> [options]
+
+Options:
+ -h --help   Print this text
+ -u <user>   Carto user (default: read from env CARTO_USER)
+ -k <key>    Carto API key (default: read from env CARTO_KEY)
+ -s          Silence output
+ -v          Increase verbosity
+ -f <format> Response format (default: json)
+Other:
+ -w <where>  Adds WHERE clause
+ -o <order>  Adds ORDER BY clause
+```
