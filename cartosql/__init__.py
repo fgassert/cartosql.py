@@ -193,9 +193,11 @@ def deleteRows(table, where, user=CARTO_USER, key=CARTO_KEY):
     return post(sql)
 
 
-def deleteRowsByIDs(table, ids, id_field='cartodb_id', user=CARTO_USER,
-                    key=CARTO_KEY):
+def deleteRowsByIDs(table, ids, id_field='cartodb_id', dtype='',
+                    user=CARTO_USER, key=CARTO_KEY):
     '''Delete rows from table by IDs'''
+    if dtype:
+        ids = [_escapeValue(i) for i in ids]
     where = '{} in ({})'.format(id_field, ','.join(ids))
     return deleteRows(table, where, user, key)
 
