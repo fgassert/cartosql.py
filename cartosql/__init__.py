@@ -207,11 +207,6 @@ def dropTable(table, user=CARTO_USER, key=CARTO_KEY):
     sql = 'DROP TABLE "{}"'.format(table)
     return post(sql)
 
-def truncateTable(table, user=CARTO_USER, key=CARTO_KEY):
-    '''Delete table'''
-    sql = 'TRUNCATE TABLE "{}"'.format(table)
-    return post(sql)
-
 if __name__ == '__main__':
     from . import cli
     cli.main()
