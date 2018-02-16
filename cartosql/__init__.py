@@ -71,7 +71,7 @@ def getFields(fields, table, where='', order='', user=CARTO_USER,
 
 def getTables(user=CARTO_USER, key=CARTO_KEY, f='csv'):
     '''Get the list of tables'''
-    r = get('SELECT * FROM CDB_UserTables()', f=f)
+    r = get('SELECT * FROM CDB_UserTables()',user, key, f)
     if f == 'csv':
         return r.text.split("\r\n")[1:-1]
     return r
@@ -79,7 +79,7 @@ def getTables(user=CARTO_USER, key=CARTO_KEY, f='csv'):
 
 def tableExists(table, user=CARTO_USER, key=CARTO_KEY):
     '''Check if table exists'''
-    return table in getTables()
+    return table in getTables(user, key)
 
 
 def createTable(table, schema, user=CARTO_USER, key=CARTO_KEY):
@@ -190,7 +190,7 @@ blockInsertRows = insertRows
 def deleteRows(table, where, user=CARTO_USER, key=CARTO_KEY):
     '''Delete rows from table'''
     sql = 'DELETE FROM "{}" WHERE {}'.format(table, where)
-    return post(sql)
+    return post(sql,user, key)
 
 
 def deleteRowsByIDs(table, ids, id_field='cartodb_id', dtype='',
@@ -205,12 +205,12 @@ def deleteRowsByIDs(table, ids, id_field='cartodb_id', dtype='',
 def dropTable(table, user=CARTO_USER, key=CARTO_KEY):
     '''Delete table'''
     sql = 'DROP TABLE "{}"'.format(table)
-    return post(sql)
+    return post(sql, user, key)
 
 def truncateTable(table, user=CARTO_USER, key=CARTO_KEY):
     '''Delete table'''
     sql = 'TRUNCATE TABLE "{}"'.format(table)
-    return post(sql)
+    return post(sql,user, key)
 
 if __name__ == '__main__':
     from . import cli
