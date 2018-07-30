@@ -59,7 +59,7 @@ def post(sql, user=CARTO_USER, key=CARTO_KEY, f=''):
 
 
 def getFields(fields, table, where='', order='', user=CARTO_USER,
-              key=CARTO_KEY, f='', post=False):
+              key=CARTO_KEY, f='', post=True):
     '''Select fields from table'''
     fields = (fields,) if isinstance(fields, str) else fields
     where = ' WHERE {}'.format(where) if where else ''

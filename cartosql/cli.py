@@ -70,7 +70,7 @@ def processArgs(args):
         return returnFormat(r, f)
     elif args['exists'] and args['<table>']:
         r = cartosql.tableExists(args['<table>'], **opts)
-        return returnFormat(r, f)
+        return r
     elif args['drop'] and args['<table>']:
         r = cartosql.dropTable(args['<table>'], **opts)
         return returnFormat(r, f)
