@@ -15,7 +15,8 @@ Read more at:
 http://carto.com/docs/carto-engine/sql-api/making-calls/
 '''
 from __future__ import unicode_literals
-from builtins import str
+try: from builtins import str
+except: from __builtin__ import str
 import requests
 import os
 import logging
@@ -24,7 +25,6 @@ import json
 CARTO_URL = 'https://{}.carto.com/api/v2/sql'
 CARTO_USER = os.environ.get('CARTO_USER')
 CARTO_KEY = os.environ.get('CARTO_KEY')
-STRICT = True
 
 def sendSql(sql, user=CARTO_USER, key=CARTO_KEY, f='', post=True):
     '''Send arbitrary sql and return response object or False'''
@@ -40,11 +40,7 @@ def sendSql(sql, user=CARTO_USER, key=CARTO_KEY, f='', post=True):
         r = requests.post(url, json=payload)
     else:
         r = requests.get(url, params=payload)
-    if not r.ok:
-        logging.error(r.text)
-        if STRICT:
-            raise Exception(r.text)
-        return False
+    r.raise_for_status()
     return r
 
 

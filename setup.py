@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='cartosql',
-    version='0.1',
+    version='0.1.1',
     description='simple library for interacting with CARTO SQL API',
     license='MIT',
     author='Francis Gassert',

@@ -7,7 +7,7 @@ Usage:
  csql get <fields> <table> [-w <where>] [-o <order>] [options]
  csql ls [options]
  csql exists <table> [options]
- csql drop <table> [options]
+ csql drop <table> [--confirm] [options]
 
 Options:
  -h --help   Print this text
@@ -72,8 +72,14 @@ def processArgs(args):
         r = cartosql.tableExists(args['<table>'], **opts)
         return r
     elif args['drop'] and args['<table>']:
-        r = cartosql.dropTable(args['<table>'], **opts)
-        return returnFormat(r, f)
+        confirm = args['--confirm']
+        if not confirm:
+            confirm = input('Drop table {}? (y/N)'.format(args['<table>'])) == 'y'
+        if confirm:
+            r = cartosql.dropTable(args['<table>'], **opts)
+            return returnFormat(r, f)
+        else:
+            print('Pass option --confirm to drop table')
     return __doc__
 
 
