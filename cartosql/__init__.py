@@ -15,8 +15,10 @@ Read more at:
 http://carto.com/docs/carto-engine/sql-api/making-calls/
 '''
 from __future__ import unicode_literals
-try: from builtins import str
-except: from __builtin__ import str
+from builtins import str
+try: string_types = (str, basestring)
+except: string_types = str
+
 import requests
 import os
 import logging
@@ -65,7 +67,8 @@ def post(sql, user=None, key=None, f=''):
 def getFields(fields, table, where='', order='', limit='', user=None,
               key=None, f='', post=True):
     '''Select fields from table'''
-    fields = (fields,) if isinstance(fields, str) else fields
+    print (type(fields), type(str), isinstance(fields, string_types))
+    fields = fields.split(',') if isinstance(fields, string_types) else fields
     where = 'WHERE {}'.format(where) if where else ''
     order = 'ORDER BY {}'.format(order) if order else ''
     limit = 'LIMIT {}'.format(limit) if limit else ''
@@ -120,7 +123,7 @@ def _cdbfyTable(table, user=None, key=None):
 def createIndex(table, fields, unique='', using='', user=None,
                 key=None):
     '''Create index on table on field(s)'''
-    fields = (fields,) if isinstance(fields, str) else fields
+    fields = (fields,) if isinstance(fields, string_types) else fields
     f_underscore = '_'.join(fields)
     f_comma = ','.join(fields)
     unique = 'UNIQUE' if unique else ''
@@ -146,7 +149,7 @@ def _escapeValue(value, dtype):
         return "NULL"
     if dtype == 'geometry':
         # if not string assume GeoJSON and assert WKID
-        if isinstance(value, str):
+        if isinstance(value, string_types):
             return value
         else:
             value = json.dumps(value)

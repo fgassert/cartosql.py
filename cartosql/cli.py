@@ -2,25 +2,28 @@
 Utility library for interacting with CARTO via the SQL API
 
 Usage:
- csql post <sql> [options]
- csql get <sql> [options]
- csql get <fields> <table> [-w <where>] [-o <order>] [options]
+ csql (post|get) [options] <sql>
+ csql select [options] <fields> <table> [-w <where>] [-o <order>] [-l <limit>]
  csql ls [options]
- csql exists <table> [options]
- csql drop <table> [--confirm] [options]
+ csql exists [options] <table>
+ csql drop [options] [--confirm] <table>
 
 Options:
- -h --help   Print this text
- -u <user>   Carto user (default: read from env CARTO_USER)
- -k <key>    Carto API key (default: read from env CARTO_KEY)
- -s          Silence output
- -v          Increase verbosity
- -f <format> Response format (default: json)
+ -h --help    Print this text
+ -u <user>    Carto user (default: read from env CARTO_USER)
+ -k <key>     Carto API key (default: read from env CARTO_KEY)
+ -s           Silence output
+ -v           Increase verbosity
+ -f <format>  Response format (default: json)
 Other:
- -w <where>  Adds WHERE clause
- -o <order>  Adds ORDER BY clause
+ -w <where>   Adds 'WHERE <where>' clause
+ -o <order>   Adds 'ORDER BY <order>' clause
+ -l <limit>   Adds 'LIMIT <limit>' clause
 
 '''
+from __future__ import unicode_literals
+from builtins import str
+
 import cartosql
 import logging
 from docopt import docopt
@@ -37,7 +40,6 @@ def returnFormat(response, f=None):
     else:
         return response.text
 
-
 def processArgs(args):
     opts = {}
     if args['-u']:
@@ -49,18 +51,21 @@ def processArgs(args):
         opts['f'] = f
     if args['--help']:
         return __doc__
-    elif args['post'] and args['<sql>']:
-        r = cartosql.post(args['<sql>'], **opts)
-        return returnFormat(r, f)
-    elif args['get']:
-        if args['<sql>']:
+    elif args['<sql>']:
+        if args['post']:
+            r = cartosql.post(args['<sql>'], **opts)
+            return returnFormat(r, f)
+        elif args['get']:
             r = cartosql.get(args['<sql>'], **opts)
             return returnFormat(r, f)
+    elif args['select']:
         if args['<fields>'] and args['<table>']:
             if args['-w']:
                 opts['where'] = args['-w']
             if args['-o']:
                 opts['order'] = args['-o']
+            if args['-l']:
+                opts['limit'] = args['-l']
             r = cartosql.getFields(args['<fields>'], args['<table>'], **opts)
             return returnFormat(r, f)
     elif args['ls']:
