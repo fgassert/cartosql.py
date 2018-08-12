@@ -21,8 +21,9 @@ Other:
  -l <limit>   Adds 'LIMIT <limit>' clause
 
 '''
-from __future__ import unicode_literals
-from builtins import str
+# Python 2
+try: input = raw_input
+except: pass
 
 import cartosql
 import logging

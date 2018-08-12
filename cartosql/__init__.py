@@ -15,7 +15,8 @@ Read more at:
 http://carto.com/docs/carto-engine/sql-api/making-calls/
 '''
 from __future__ import unicode_literals
-from builtins import str
+try: from builtins import str
+except: from __builtin__ import str
 try: string_types = (str, basestring)
 except: string_types = str
 
@@ -67,7 +68,6 @@ def post(sql, user=None, key=None, f=''):
 def getFields(fields, table, where='', order='', limit='', user=None,
               key=None, f='', post=True):
     '''Select fields from table'''
-    print (type(fields), type(str), isinstance(fields, string_types))
     fields = fields.split(',') if isinstance(fields, string_types) else fields
     where = 'WHERE {}'.format(where) if where else ''
     order = 'ORDER BY {}'.format(order) if order else ''
