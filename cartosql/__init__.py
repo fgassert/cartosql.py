@@ -26,8 +26,16 @@ CARTO_URL = 'https://{}.carto.com/api/v2/sql'
 CARTO_USER = os.environ.get('CARTO_USER')
 CARTO_KEY = os.environ.get('CARTO_KEY')
 
-def sendSql(sql, user=CARTO_USER, key=CARTO_KEY, f='', post=True):
+def init(user=None, key=None):
+    '''Set user and key'''
+    global CARTO_USER, CARTO_KEY
+    CARTO_USER = user or os.environ.get('CARTO_USER')
+    CARTO_KEY = key or os.enviorn.get('CARTO_KEY')
+
+def sendSql(sql, user=None, key=None, f='', post=True):
     '''Send arbitrary sql and return response object or False'''
+    user = user or CARTO_USER
+    key = key or CARTO_KEY
     url = CARTO_URL.format(user)
     payload = {
         'api_key': key,
@@ -44,41 +52,41 @@ def sendSql(sql, user=CARTO_USER, key=CARTO_KEY, f='', post=True):
     return r
 
 
-def get(sql, user=CARTO_USER, key=CARTO_KEY, f=''):
+def get(sql, user=None, key=None, f=''):
     '''Send arbitrary sql and return response object or False'''
     return sendSql(sql, user, key, f, False)
 
 
-def post(sql, user=CARTO_USER, key=CARTO_KEY, f=''):
+def post(sql, user=None, key=None, f=''):
     '''Send arbitrary sql and return response object or False'''
     return sendSql(sql, user, key, f)
 
 
-def getFields(fields, table, where='', order='', user=CARTO_USER,
-              key=CARTO_KEY, f='', post=True):
+def getFields(fields, table, where='', order='', limit='', user=None,
+              key=None, f='', post=True):
     '''Select fields from table'''
     fields = (fields,) if isinstance(fields, str) else fields
-    where = ' WHERE {}'.format(where) if where else ''
-    order = ' ORDER BY {}'.format(order) if order else ''
-    sql = 'SELECT {} FROM "{}" {} {}'.format(
-        ','.join(fields), table, where, order)
+    where = 'WHERE {}'.format(where) if where else ''
+    order = 'ORDER BY {}'.format(order) if order else ''
+    limit = 'LIMIT {}'.format(limit) if limit else ''
+    sql = 'SELECT {} FROM "{}" {} {} {}'.format(
+        ','.join(fields), table, where, order, limit)
     return sendSql(sql, user, key, f, post)
 
-
-def getTables(user=CARTO_USER, key=CARTO_KEY, f='csv'):
+def getTables(user=None, key=None, f='csv'):
     '''Get the list of tables'''
-    r = get('SELECT * FROM CDB_UserTables()',user, key, f)
+    r = get('SELECT * FROM CDB_UserTables()', user, key, f)
     if f == 'csv':
-        return r.text.split("\r\n")[1:-1]
+        return r.text.splitlines()[1:-1]
     return r
 
 
-def tableExists(table, user=CARTO_USER, key=CARTO_KEY):
+def tableExists(table, user=None, key=None):
     '''Check if table exists'''
     return table in getTables(user, key)
 
 
-def createTable(table, schema, user=CARTO_USER, key=CARTO_KEY):
+def createTable(table, schema, user=None, key=None):
     '''
     Create table with schema and CartoDBfy table
 
@@ -93,15 +101,24 @@ def createTable(table, schema, user=CARTO_USER, key=CARTO_KEY):
         return _cdbfyTable(table, user, key)
     return False
 
+def createTableFromQuery(table, query, user=None, key=None):
+    '''
+    Create table with from query and CartoDBfy table
+    '''
+    sql = 'CREATE TABLE "{}" AS {}'.format(table, query)
+    if post(sql, user, key):
+        return _cdbfyTable(table, user, key)
+    return False
 
-def _cdbfyTable(table, user=CARTO_USER, key=CARTO_KEY):
+
+def _cdbfyTable(table, user=None, key=None):
     '''CartoDBfy table so that it appears in Carto UI'''
     sql = "SELECT cdb_cartodbfytable('{}','\"{}\"')".format(user, table)
     return post(sql, user, key)
 
 
-def createIndex(table, fields, unique='', using='', user=CARTO_USER,
-                key=CARTO_KEY):
+def createIndex(table, fields, unique='', using='', user=None,
+                key=None):
     '''Create index on table on field(s)'''
     fields = (fields,) if isinstance(fields, str) else fields
     f_underscore = '_'.join(fields)
@@ -154,15 +171,15 @@ def _dumpRows(rows, dtypes):
     return ','.join(dumpedRows)
 
 
-def _insertRows(table, fields, dtypes, rows, user=CARTO_USER, key=CARTO_KEY):
+def _insertRows(table, fields, dtypes, rows, user=None, key=None):
     values = _dumpRows(rows, tuple(dtypes))
     sql = 'INSERT INTO "{}" ({}) VALUES {}'.format(
         table, ', '.join(fields), values)
     return post(sql, user, key)
 
 
-def insertRows(table, fields, dtypes, rows, user=CARTO_USER,
-               key=CARTO_KEY, blocksize=1000):
+def insertRows(table, fields, dtypes, rows, user=None,
+               key=None, blocksize=1000):
     '''
     Insert rows into table
 
@@ -183,14 +200,14 @@ def insertRows(table, fields, dtypes, rows, user=CARTO_USER,
 blockInsertRows = insertRows
 
 
-def deleteRows(table, where, user=CARTO_USER, key=CARTO_KEY):
+def deleteRows(table, where, user=None, key=None):
     '''Delete rows from table'''
     sql = 'DELETE FROM "{}" WHERE {}'.format(table, where)
     return post(sql,user, key)
 
 
 def deleteRowsByIDs(table, ids, id_field='cartodb_id', dtype='',
-                    user=CARTO_USER, key=CARTO_KEY):
+                    user=None, key=None):
     '''Delete rows from table by IDs'''
     if dtype:
         ids = [_escapeValue(i, dtype) for i in ids]
@@ -198,12 +215,12 @@ def deleteRowsByIDs(table, ids, id_field='cartodb_id', dtype='',
     return deleteRows(table, where, user, key)
 
 
-def dropTable(table, user=CARTO_USER, key=CARTO_KEY):
+def dropTable(table, user=None, key=None):
     '''Delete table'''
     sql = 'DROP TABLE "{}"'.format(table)
     return post(sql, user, key)
 
-def truncateTable(table, user=CARTO_USER, key=CARTO_KEY):
+def truncateTable(table, user=None, key=None):
     '''Delete table'''
     sql = 'TRUNCATE TABLE "{}"'.format(table)
     return post(sql,user, key)
