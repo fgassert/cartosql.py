@@ -29,11 +29,19 @@ CARTO_URL = 'https://{}.carto.com/api/v2/sql'
 CARTO_USER = os.environ.get('CARTO_USER')
 CARTO_KEY = os.environ.get('CARTO_KEY')
 
-def init(user=None, key=None):
+def init(user=None, key=None, auth=True):
     '''Set user and key'''
     global CARTO_USER, CARTO_KEY
     CARTO_USER = user or os.environ.get('CARTO_USER')
-    CARTO_KEY = key or os.enviorn.get('CARTO_KEY')
+    CARTO_KEY = key or os.environ.get('CARTO_KEY')
+    if auth:
+        try:
+            get('SELECT * FROM CDB_UserTables() LIMIT 1')
+            return True
+        except requests.HTTPError as e:
+            logging.warning('Failed to authenticate')
+            logging.warning(e)
+            return False
 
 def sendSql(sql, user=None, key=None, f='', post=True):
     '''Send arbitrary sql and return response object or False'''
@@ -80,7 +88,7 @@ def getTables(user=None, key=None, f='csv'):
     '''Get the list of tables'''
     r = get('SELECT * FROM CDB_UserTables()', user, key, f)
     if f == 'csv':
-        return r.text.splitlines()[1:-1]
+        return r.text.splitlines()[1:]
     return r
 
 
@@ -116,6 +124,7 @@ def createTableFromQuery(table, query, user=None, key=None):
 
 def _cdbfyTable(table, user=None, key=None):
     '''CartoDBfy table so that it appears in Carto UI'''
+    user = user or CARTO_USER
     sql = "SELECT cdb_cartodbfytable('{}','\"{}\"')".format(user, table)
     return post(sql, user, key)
 

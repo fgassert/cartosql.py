@@ -50,9 +50,9 @@ def processArgs(args):
     f = args['-f']
     if f:
         opts['f'] = f
-    if args['--help']:
+    if args['--help'] or not cartosql.init():
         return __doc__
-    elif args['<sql>']:
+    if args['<sql>']:
         if args['post']:
             r = cartosql.post(args['<sql>'], **opts)
             return returnFormat(r, f)
