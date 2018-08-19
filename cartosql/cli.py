@@ -7,6 +7,8 @@ Usage:
  csql ls [options]
  csql exists [options] <table>
  csql drop [options] [--confirm] <table>
+ csql getacl <table>
+ csql setacl (--public|--link|--private) <table>
 
 Options:
  -h --help    Print this text
@@ -86,6 +88,20 @@ def processArgs(args):
             return returnFormat(r, f)
         else:
             print('Pass option --confirm to drop table')
+    elif args['getacl'] and args['<table>']:
+        from cartosql import dataset
+        return dataset.getProperties(args['<table>'])['privacy']
+    elif args['setacl'] and args['<table>']:
+        acl = None
+        if args['--public']:
+            acl = 'PUBLIC'
+        elif args['--private']:
+            acl = 'PRIVATE'
+        elif args['--link']:
+            acl = 'LINK'
+        if acl:
+            from cartosql import dataset
+            return dataset.setPrivacy(args['<table>'], acl)
     return __doc__
 
 
