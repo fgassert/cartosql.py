@@ -29,21 +29,23 @@ pip install -e .
 
 ```
 Usage:
- csql post <sql> [options]
- csql get <sql> [options]
- csql get <fields> <table> [-w <where>] [-o <order>] [options]
+ csql (post|get) [options] <sql>
+ csql select [options] <fields> <table> [-w <where>] [-o <order>] [-l <limit>]
  csql ls [options]
- csql exists <table> [options]
- csql drop <table> [options]
+ csql exists [options] <table>
+ csql drop [options] [--confirm] <table>
+ csql getacl <table>
+ csql setacl (--public|--link|--private) <table>
 
 Options:
- -h --help   Print this text
- -u <user>   Carto user (default: read from env CARTO_USER)
- -k <key>    Carto API key (default: read from env CARTO_KEY)
- -s          Silence output
- -v          Increase verbosity
- -f <format> Response format (default: json)
+ -h --help    Print this text
+ -u <user>    Carto user (default: read from env CARTO_USER)
+ -k <key>     Carto API key (default: read from env CARTO_KEY)
+ -s           Silence output
+ -v           Increase verbosity
+ -f <format>  Response format (default: json)
 Other:
- -w <where>  Adds WHERE clause
- -o <order>  Adds ORDER BY clause
+ -w <where>   Adds 'WHERE <where>' clause
+ -o <order>   Adds 'ORDER BY <order>' clause
+ -l <limit>   Adds 'LIMIT <limit>' clause
 ```

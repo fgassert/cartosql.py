@@ -3,12 +3,12 @@ from setuptools import setup
 
 setup(
     name='cartosql',
-    version='0.2.0',
+    version='0.2.1',
     description='simple library for interacting with CARTO SQL API',
     license='MIT',
     author='Francis Gassert',
     url='https://github.com/fgassert/cartosql',
     packages=['cartosql'],
-    install_requires=['requests', 'docopt'],
+    install_requires=['requests', 'docopt', 'carto'],
     scripts=['csql']
 )

@@ -16,7 +16,8 @@ http://carto.com/docs/carto-engine/sql-api/making-calls/
 '''
 # Python 2
 from __future__ import unicode_literals
-from builtins import str
+try: from builtins import str
+except: str = unicode
 try: string_types = (str, basestring)
 except: string_types = str
 
