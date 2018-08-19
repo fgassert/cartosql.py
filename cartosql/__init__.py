@@ -14,9 +14,9 @@ data = r.json()
 Read more at:
 http://carto.com/docs/carto-engine/sql-api/making-calls/
 '''
+# Python 2
 from __future__ import unicode_literals
-try: from builtins import str
-except: from __builtin__ import str
+from builtins import str
 try: string_types = (str, basestring)
 except: string_types = str
 
@@ -25,7 +25,8 @@ import os
 import logging
 import json
 
-CARTO_URL = 'https://{}.carto.com/api/v2/sql'
+CARTO_URL = 'https://{}.carto.com/'
+CARTO_SQL_ENDPOINT = 'api/v2/sql'
 CARTO_USER = os.environ.get('CARTO_USER')
 CARTO_KEY = os.environ.get('CARTO_KEY')
 
@@ -47,7 +48,7 @@ def sendSql(sql, user=None, key=None, f='', post=True):
     '''Send arbitrary sql and return response object or False'''
     user = user or CARTO_USER
     key = key or CARTO_KEY
-    url = CARTO_URL.format(user)
+    url = CARTO_URL.format(user) + CARTO_SQL_ENDPOINT
     payload = {
         'api_key': key,
         'q': sql,
