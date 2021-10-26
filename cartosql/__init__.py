@@ -53,7 +53,7 @@ def sendSql(sql, user=None, key=None, f='', post=True):
         'q': sql,
     }
     if len(f):
-        payload['format'] = f
+        payload['f'] = f
     logging.debug((url, payload))
     if post:
         r = requests.post(url, json=payload)
